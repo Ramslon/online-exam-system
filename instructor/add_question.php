@@ -1,25 +1,9 @@
-<?php include '../config/db.php'; ?>
+<?php include '../includes/header.php'; include '../config/db.php'; ?>
 
-<?php
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $question = $_POST['question'];
-    $test_id = $_POST['test_id'];
-
-    $conn->query("INSERT INTO questions (test_id,question) VALUES ('$test_id','$question')");
-    $qid = $conn->insert_id;
-
-    for ($i=1; $i<=4; $i++) {
-        $opt = $_POST['option'.$i];
-        $correct = ($_POST['correct'] == $i) ? 1 : 0;
-        $conn->query("INSERT INTO options (question_id,option_text,is_correct) VALUES ('$qid','$opt','$correct')");
-    }
-    echo "Question added";
-}
-?>
-
-<form method="POST" class="container">
+<h3>Add Question</h3>
+<form method="POST" class="card p-3 shadow">
 <input name="test_id" class="form-control" placeholder="Test ID" required>
-<textarea name="question" class="form-control mt-2" placeholder="Question" required></textarea>
+<textarea name="question" class="form-control mt-2" placeholder="Question"></textarea>
 
 <input name="option1" class="form-control mt-2" placeholder="Option 1">
 <input name="option2" class="form-control mt-2" placeholder="Option 2">
@@ -33,5 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <option value="4">Correct Option 4</option>
 </select>
 
-<button class="btn btn-primary mt-3">Add Question</button>
+<button class="btn btn-primary mt-3">Save Question</button>
 </form>
+
+<?php include '../includes/footer.php'; ?>
