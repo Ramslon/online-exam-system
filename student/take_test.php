@@ -3,7 +3,7 @@
 <form method="POST" action="submit_test.php" id="examForm">
 <div class="alert alert-info">Time Left: <span id="timer"></span></div>
 
-<?php $q = $conn->query("SELECT * FROM questions"); while($row=$q->fetch_assoc()) { ?>
+<?php $q = $conn->query("SELECT * FROM questions ORDER BY RAND()"); while($row=$q->fetch_assoc()) { ?>
 <div class="card p-3 mt-3">
 <p><?php echo $row['question']; ?></p>
 <?php $opt=$conn->query("SELECT * FROM options WHERE question_id=".$row['id']); while($o=$opt->fetch_assoc()) { ?>
@@ -21,6 +21,20 @@
 <script>
 let t=120;
 setInterval(()=>{t--;document.getElementById('timer').innerText=t;if(t<=0)document.getElementById('examForm').submit();},1000);
+let submitted = false;
+
+// Prevent multiple submits
+document.getElementById("examForm").addEventListener("submit", () => {
+    submitted = true;
+});
+
+// Detect tab switching
+document.addEventListener("visibilitychange", function () {
+    if (document.hidden && !submitted) {
+        alert("You switched tabs! Exam will be submitted.");
+        document.getElementById("examForm").submit();
+    }
+});
 </script>
 
 <?php include '../includes/footer.php'; ?>

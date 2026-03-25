@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $res = $conn->query("SELECT * FROM users WHERE email='$email'");
     if ($res->num_rows > 0) {
         $user = $res->fetch_assoc();
-        if ($password == $user['password']) {
+        if (password_verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['role'] = $user['role'];
 
