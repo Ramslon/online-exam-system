@@ -1,4 +1,5 @@
-<?php include '../config/db.php'; session_start(); ?>
+<?php include '../config/db.php'; 
+include '../includes/header.php' ?>
 
 <?php
 $answers = $_POST['answers'];
