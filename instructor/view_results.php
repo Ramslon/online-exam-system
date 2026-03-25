@@ -10,29 +10,50 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'instructor') {
 ?>
 
 <h3 class="mb-4">Student Results & Analytics</h3>
+  <?php
+  $avg = $conn->query("SELECT AVG(score) as avg_score FROM results")->fetch_assoc();
+   ?>
+
+  <div class="alert alert-secondary">
+    Average Score: <?php echo round($avg['avg_score'], 2); ?>
+  </div>
 
 <!-- RESULTS TABLE -->
-<div class="card p-4 shadow mb-4">
+<div class="table-responsive">
     <h5 class="mb-3">Results Table</h5>
 
     <table class="table table-bordered table-striped">
         <thead class="table-dark">
-            <tr>
-                <th>Student ID</th>
-                <th>Test ID</th>
-                <th>Score</th>
-                <th>Date</th>
-            </tr>
+        <tr>
+          <th>Student Name</th>
+          <th>Email</th>
+          <th>Test</th>
+          <th>Score</th>
+          <th>Date</th>
+        </tr>
         </thead>
         <tbody>
             <?php
-            $res = $conn->query("SELECT * FROM results ORDER BY submitted_at DESC");
-
+            $res = $conn->query("
+              SELECT 
+                r.*, 
+                u.name, 
+                u.email, 
+                t.title AS test_title
+              FROM results r
+              JOIN users u ON r.student_id = u.id
+              JOIN tests t ON r.test_id = t.id
+              ORDER BY r.submitted_at DESC
+            ");
+            if ($res->num_rows == 0) {
+             echo "<div class='alert alert-info'>No results available yet.</div>";
+             }
             while ($row = $res->fetch_assoc()) {
                 echo "<tr>
-                        <td>{$row['student_id']}</td>
-                        <td>{$row['test_id']}</td>
-                        <td>{$row['score']}</td>
+                        <td>{$row['name']}</td>
+                        <td>{$row['email']}</td>
+                        <td>{$row['test_title']}</td>
+                        <td><span class='badge bg-success'>{$row['score']}</span></td>
                         <td>{$row['submitted_at']}</td>
                       </tr>";
             }
