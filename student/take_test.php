@@ -1,19 +1,14 @@
-<?php include '../config/db.php'; session_start(); ?>
+<?php include '../includes/header.php'; include '../config/db.php'; ?>
 
-<?php $questions = $conn->query("SELECT * FROM questions"); ?>
-
-<form method="POST" action="submit_test.php" id="examForm" class="container">
+<form method="POST" action="submit_test.php" id="examForm">
 <div class="alert alert-info">Time Left: <span id="timer"></span></div>
 
-<?php while($q = $questions->fetch_assoc()) { ?>
-<div class="card p-3 mt-2">
-<p><?php echo $q['question']; ?></p>
-<?php 
-$options = $conn->query("SELECT * FROM options WHERE question_id=".$q['id']);
-while($o = $options->fetch_assoc()) {
-?>
+<?php $q = $conn->query("SELECT * FROM questions"); while($row=$q->fetch_assoc()) { ?>
+<div class="card p-3 mt-3">
+<p><?php echo $row['question']; ?></p>
+<?php $opt=$conn->query("SELECT * FROM options WHERE question_id=".$row['id']); while($o=$opt->fetch_assoc()) { ?>
 <div class="form-check">
-<input class="form-check-input" type="radio" name="answers[<?php echo $q['id']; ?>]" value="<?php echo $o['id']; ?>">
+<input class="form-check-input" type="radio" name="answers[<?php echo $row['id']; ?>]" value="<?php echo $o['id']; ?>">
 <label><?php echo $o['option_text']; ?></label>
 </div>
 <?php } ?>
@@ -24,12 +19,8 @@ while($o = $options->fetch_assoc()) {
 </form>
 
 <script>
-let timeLeft = 120;
-setInterval(() => {
-    timeLeft--;
-    document.getElementById("timer").innerText = timeLeft;
-    if (timeLeft <= 0) {
-        document.getElementById("examForm").submit();
-    }
-}, 1000);
+let t=120;
+setInterval(()=>{t--;document.getElementById('timer').innerText=t;if(t<=0)document.getElementById('examForm').submit();},1000);
 </script>
+
+<?php include '../includes/footer.php'; ?>
