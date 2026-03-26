@@ -201,7 +201,53 @@ The system can be deployed on free hosting platforms like:
 
 ## 📸 Screenshots
 
-*(Add screenshots here for better presentation)*
+
+### 🔐 Login Page
+
+![Login](screenshots/login.png)
+
+---
+
+### 📝 Register Page
+
+![Register](screenshots/register.png)
+
+---
+
+### 📊 Instructor Dashboard
+
+![Dashboard](screenshots/dashboard.png)
+
+---
+
+### ➕ Create Test
+
+![Create Test](screenshots/create-test.png)
+
+---
+
+### ❓ Add Questions
+
+![Questions](screenshots/questions.png)
+
+---
+
+### 🧪 Take Test
+
+![Take Test](screenshots/take-test.png)
+
+---
+
+### 📈 Results & Analytics
+
+![Results](screenshots/results.png)
+
+---
+
+### 📄 PDF Export
+
+![PDF](screenshots/pdf.png)
+
 
 ---
 
