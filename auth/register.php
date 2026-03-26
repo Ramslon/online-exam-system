@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <option value="instructor">Instructor</option>
 </select>
 <button class="btn btn-success w-100 mt-3">Register</button>
-<div class="mt-3">
+<div class="mt-3 text-center">
     <a href="login.php" class="btn btn-outline-primary w-100">
         Already have an account? Login
     </a>
