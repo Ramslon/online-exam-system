@@ -36,6 +36,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <input class="form-control mt-2" name="email" placeholder="Email" required>
 <input class="form-control mt-2" type="password" name="password" placeholder="Password" required>
 <button class="btn btn-primary w-100 mt-3">Login</button>
+<div class="mt-3 text-center">
+    <a href="register.php" class="btn btn-outline-secondary w-100">
+        Don't have an account? Register
+    </a>
+</div>
 </form>
 </div>
 </div>
