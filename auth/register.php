@@ -8,10 +8,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $sql = "INSERT INTO users (name,email,password,role) 
             VALUES ('$name','$email','$password','$role')";
 
-    if ($conn->query($sql) === TRUE) {
-    header("Location: login.php");
-    exit();
-    }
+    echo "<script>
+    alert('Registered successfully');
+    window.location.href='login.php';
+    </script>";
     } else {
         echo "<div class='alert alert-danger'>Error: " . $conn->error . "</div>";
     }
@@ -32,6 +32,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <option value="instructor">Instructor</option>
 </select>
 <button class="btn btn-success w-100 mt-3">Register</button>
+<div class="mt-3">
+    <a href="login.php" class="btn btn-outline-primary w-100">
+        Already have an account? Login
+    </a>
+</div>
 </form>
 </div>
 </div>
