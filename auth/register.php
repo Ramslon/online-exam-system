@@ -1,42 +1,80 @@
-<?php include '../config/db.php';
+<?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+session_start();
+include '../config/db.php';
+
+$message = "";
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $name = $_POST['name'];
-    $email = $_POST['email'];
+    $name = trim($_POST['name']);
+    $email = strtolower(trim($_POST['email']));
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     $role = $_POST['role'];
 
-    $sql = "INSERT INTO users (name,email,password,role) 
-            VALUES ('$name','$email','$password','$role')";
+    // Check if user already exists
+    $check = $conn->prepare("SELECT * FROM users WHERE email=?");
+    $check->bind_param("s", $email);
+    $check->execute();
+    $result = $check->get_result();
 
-    echo "<script>
-    alert('Registered successfully');
-    window.location.href='login.php';
-    </script>";
+    if ($result->num_rows > 0) {
+        $message = "User already exists!";
     } else {
-        echo "<div class='alert alert-danger'>Error: " . $conn->error . "</div>";
-    }
+        // Insert user
+        $stmt = $conn->prepare("INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("ssss", $name, $email, $password, $role);
 
+        if ($stmt->execute()) {
+            $message = "Registration successful! You can now login.";
+        } else {
+            $message = "Error: " . $conn->error;
+        }
+    }
+}
 ?>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
 
 <div class="container d-flex justify-content-center align-items-center" style="height:100vh;">
-<div class="card p-4 shadow" style="width:350px;">
-<h4 class="text-center">Register</h4>
-<form method="POST">
-<input class="form-control mt-2" name="name" placeholder="Name" required>
-<input class="form-control mt-2" name="email" placeholder="Email" required>
-<input class="form-control mt-2" name="password" placeholder="Password" required>
-<select class="form-control mt-2" name="role">
-<option value="student">Student</option>
-<option value="instructor">Instructor</option>
-</select>
-<button class="btn btn-success w-100 mt-3">Register</button>
-<div class="mt-3 text-center">
-    <a href="login.php" class="btn btn-outline-primary w-100">
-        Already have an account? Login
-    </a>
+    <div class="card p-4 shadow" style="width:350px;">
+        
+        <h4 class="text-center mb-3">Register</h4>
+
+        <!-- Message -->
+        <?php if ($message): ?>
+            <div class="alert alert-info"><?php echo $message; ?></div>
+        <?php endif; ?>
+
+        <form method="POST">
+            <input class="form-control mt-2" name="name" placeholder="Full Name" required>
+            <input class="form-control mt-2" name="email" placeholder="Email" required>
+            <input class="form-control mt-2" type="password" name="password" placeholder="Password" required>
+
+            <select class="form-control mt-2" name="role" required>
+                <option value="">Select Role</option>
+                <option value="student">Student</option>
+                <option value="instructor">Instructor</option>
+            </select>
+
+            <button class="btn btn-success w-100 mt-3">Register</button>
+
+            <p class="text-center mt-3">
+                Already have an account?
+                <a href="login.php">Login here</a>
+            </p>
+        </form>
+
+    </div>
 </div>
-</form>
-</div>
-</div>
+
+</body>
+</html>
