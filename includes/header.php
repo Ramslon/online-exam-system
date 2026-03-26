@@ -4,10 +4,15 @@
 <head>
 <title>Online Exam System</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3135/3135755.png">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
 body { background: #f4f6f9; }
 .card { border-radius: 12px; }
+.card:hover {
+    transform: scale(1.02);
+    transition: 0.2s;
+}
 </style>
 </head>
 <body>

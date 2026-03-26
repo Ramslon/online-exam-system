@@ -16,8 +16,41 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'instructor') {
 
   <div class="alert alert-secondary">
     Average Score: <?php echo round($avg['avg_score'], 2); ?>
+    <?php
+// Top performer
+$top = $conn->query("
+    SELECT u.name, MAX(score) as top_score 
+    FROM results r
+    JOIN users u ON r.student_id = u.id
+")->fetch_assoc();
+
+// Pass rate (assume pass = 50)
+$pass = $conn->query("SELECT COUNT(*) as pass FROM results WHERE score >= 50")->fetch_assoc();
+$total = $conn->query("SELECT COUNT(*) as total FROM results")->fetch_assoc();
+
+$passRate = $total['total'] > 0 ? ($pass['pass'] / $total['total']) * 100 : 0;
+?>
+
+<div class="row">
+  <div class="col-md-4">
+    <div class="card p-3 shadow">
+      <h6>Top Performer</h6>
+      <h5><?php echo $top['name'] ?? 'N/A'; ?></h5>
+      <small>Score: <?php echo $top['top_score'] ?? 0; ?></small>
+    </div>
   </div>
 
+  <div class="col-md-4">
+    <div class="card p-3 shadow">
+      <h6>Pass Rate</h6>
+      <h5><?php echo round($passRate,2); ?>%</h5>
+    </div>
+  </div>
+</div>
+  </div>
+<a href="export_pdf.php" class="btn btn-danger mb-3">
+    Export to PDF
+</a>
 <!-- RESULTS TABLE -->
 <div class="table-responsive">
     <h5 class="mb-3">Results Table</h5>

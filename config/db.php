@@ -3,7 +3,7 @@ $servername = "localhost";
 $username = "root";
 $password = ""; // <-- leave empty if you didn't set a MySQL root password
 $dbname = "exam_system";
-$port = 3306;
+$port = "3306";
 
 $conn = new mysqli($servername, $username, $password, $dbname, $port);
 
