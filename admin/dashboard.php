@@ -1,11 +1,13 @@
 <?php
 session_start();
+include '../config/db.php'; // ✅ ADD THIS
+
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../auth/login.php");
     exit();
 }
 
-
+// Analytics queries
 $totalUsers = $conn->query("SELECT COUNT(*) as total FROM users")->fetch_assoc()['total'];
 $students = $conn->query("SELECT COUNT(*) as total FROM users WHERE role='student'")->fetch_assoc()['total'];
 $instructors = $conn->query("SELECT COUNT(*) as total FROM users WHERE role='instructor'")->fetch_assoc()['total'];
@@ -30,9 +32,16 @@ include '../includes/header.php';
             <a href="view_users.php" class="btn btn-success mt-2">Go</a>
         </div>
     </div>
-             <a href="logs.php" class="btn btn-dark mt-2">View Logs</a>
+
+    <div class="col-md-4">
+        <div class="card shadow p-3 text-center">
+            <h5>🧾 Activity Logs</h5>
+            <a href="logs.php" class="btn btn-dark mt-2">View Logs</a>
+        </div>
+    </div>
 
 </div>
+
 <div class="row mt-4">
 
 <div class="col-md-4">
@@ -59,4 +68,3 @@ include '../includes/header.php';
 </div>
 
 <?php include '../includes/footer.php'; ?>
-
