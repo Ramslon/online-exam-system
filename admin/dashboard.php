@@ -1,6 +1,6 @@
 <?php
 session_start();
-if ($_SESSION['role'] != 'admin') {
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../auth/login.php");
     exit();
 }
@@ -28,3 +28,6 @@ include '../includes/header.php';
 </div>
 
 <?php include '../includes/footer.php'; ?>
+
+var_dump($_SESSION);
+exit();
