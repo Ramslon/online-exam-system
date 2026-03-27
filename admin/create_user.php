@@ -7,6 +7,8 @@ if ($_SESSION['role'] != 'admin') {
     exit();
 }
 
+include '../includes/header.php';
+
 $message = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -28,17 +30,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <h3>Create User</h3>
 
-<?php if ($message) echo $message; ?>
+<?php if ($message): ?>
+<div class="alert alert-info"><?php echo $message; ?></div>
+<?php endif; ?>
 
+<div class="card p-4 shadow" style="max-width:500px;">
 <form method="POST">
-<input name="name" placeholder="Name" required><br>
-<input name="email" placeholder="Email" required><br>
-<input type="password" name="password" placeholder="Password" required><br>
 
-<select name="role">
+<input class="form-control mt-2" name="name" placeholder="Full Name" required>
+<input class="form-control mt-2" name="email" placeholder="Email" required>
+<input class="form-control mt-2" type="password" name="password" placeholder="Password" required>
+
+<select class="form-control mt-2" name="role" required>
+    <option value="">Select Role</option>
     <option value="student">Student</option>
     <option value="instructor">Instructor</option>
-</select><br><br>
+</select>
 
-<button>Create User</button>
+<button class="btn btn-primary w-100 mt-3">Create User</button>
+
 </form>
+</div>
+
+<?php include '../includes/footer.php'; ?>
