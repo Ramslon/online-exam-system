@@ -4,6 +4,12 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../auth/login.php");
     exit();
 }
+
+
+$totalUsers = $conn->query("SELECT COUNT(*) as total FROM users")->fetch_assoc()['total'];
+$students = $conn->query("SELECT COUNT(*) as total FROM users WHERE role='student'")->fetch_assoc()['total'];
+$instructors = $conn->query("SELECT COUNT(*) as total FROM users WHERE role='instructor'")->fetch_assoc()['total'];
+
 include '../includes/header.php';
 ?>
 
@@ -24,10 +30,33 @@ include '../includes/header.php';
             <a href="view_users.php" class="btn btn-success mt-2">Go</a>
         </div>
     </div>
+             <a href="logs.php" class="btn btn-dark mt-2">View Logs</a>
+
+</div>
+<div class="row mt-4">
+
+<div class="col-md-4">
+<div class="card p-3 shadow text-center">
+<h5>Total Users</h5>
+<h3><?php echo $totalUsers; ?></h3>
+</div>
+</div>
+
+<div class="col-md-4">
+<div class="card p-3 shadow text-center">
+<h5>Students</h5>
+<h3><?php echo $students; ?></h3>
+</div>
+</div>
+
+<div class="col-md-4">
+<div class="card p-3 shadow text-center">
+<h5>Instructors</h5>
+<h3><?php echo $instructors; ?></h3>
+</div>
+</div>
 
 </div>
 
 <?php include '../includes/footer.php'; ?>
 
-var_dump($_SESSION);
-exit();
