@@ -43,9 +43,15 @@ if ($search) {
 </span>
 </td>
 <td>
-<a href="edit_user.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">Edit</a>
-<a href="delete_user.php?id=<?php echo $row['id']; ?>" class="btn btn-danger btn-sm"
-  onclick="return confirm('Delete this user?')">Delete</a>
+<!-- Edit Button -->
+<button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?php echo $row['id']; ?>">
+    Edit
+</button>
+
+<!-- Delete Button -->
+<button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal<?php echo $row['id']; ?>">
+    Delete
+</button>
 </td>
 </tr>
 <?php endwhile; ?>
