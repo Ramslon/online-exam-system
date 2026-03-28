@@ -2,10 +2,15 @@
 session_start();
 include '../config/db.php';
 include '../includes/header.php';
+include '../includes/permissions.php';
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../auth/login.php");
     exit();
+}
+
+if (!hasPermission($conn, $_SESSION['role'], 'manage_users')) {
+    die("Access Denied");
 }
 
 $id = $_GET['id'];

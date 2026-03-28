@@ -1,12 +1,19 @@
 <?php
 session_start();
 include '../config/db.php';
+include '../includes/permissions.php';
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../auth/login.php");
     exit();
 }
+
+
 include '../includes/header.php';
+
+if (!hasPermission($conn, $_SESSION['role'], 'manage_users')) {
+    die("Access Denied");
+}
 
 $message = "";
 

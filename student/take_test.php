@@ -1,4 +1,12 @@
-<?php include '../includes/header.php'; include '../config/db.php'; ?>
+<?php include '../includes/header.php';
+ include '../config/db.php'; 
+ include '../includes/permissions.php';
+
+ if (!hasPermission($conn, $_SESSION['role'], 'take_test')) {
+    die("Access Denied");
+}
+ 
+ ?>
 
 <form method="POST" action="submit_test.php" id="examForm">
 <div class="alert alert-info">Time Left: <span id="timer"></span></div>

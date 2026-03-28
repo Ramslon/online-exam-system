@@ -1,10 +1,15 @@
 <?php
 session_start();
 include '../config/db.php';
+include '../includes/permissions.php';
 
 if ($_SESSION['role'] != 'admin') {
     header("Location: ../auth/login.php");
     exit();
+}
+
+if (!hasPermission($conn, $_SESSION['role'], 'manage_users')) {
+    die("Access Denied");
 }
 
 $id = $_POST['id'];

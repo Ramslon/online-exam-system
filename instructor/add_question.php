@@ -1,4 +1,11 @@
-<?php include '../includes/header.php'; include '../config/db.php'; ?>
+<?php include '../includes/header.php';
+ include '../config/db.php'; 
+ include '../includes/permissions.php';
+
+ if (!hasPermission($conn, $_SESSION['role'], 'add_question')) {
+    die("Access Denied");
+}
+ ?>
 
 <h3>Add Question</h3>
 <form method="POST" class="card p-3 shadow">

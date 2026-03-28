@@ -1,11 +1,16 @@
 <?php 
 include '../includes/header.php'; 
 include '../config/db.php';
+include '../includes/permissions.php';
 
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] != 'instructor') {
     header("Location: ../auth/login.php");
     exit();
+}
+
+if (!hasPermission($conn, $_SESSION['role'], 'create_test')) {
+    die("Access Denied");
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
