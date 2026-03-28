@@ -20,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $conn->query("INSERT INTO tests (title, duration, created_by) 
                   VALUES ('$title','$duration','$created_by')");
+    $conn->query("INSERT INTO notifications (message) VALUES ('New test created: $title')");
 
     $test_id = $conn->insert_id;
     echo "<div class='alert alert-success'>
