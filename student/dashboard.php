@@ -146,7 +146,11 @@ $row['score'] >= 70 ? 'success' :
 </span>
 </td>
 
-<td><?= $row['created_at'] ?></td>
+<td>
+<?php 
+echo isset($row['created_at']) ? $row['created_at'] : 'N/A'; 
+?>
+</td>
 
 </tr>
 <?php endwhile; ?>
