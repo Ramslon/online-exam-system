@@ -2,7 +2,6 @@
 include '../includes/header.php';
 include '../config/db.php';
 
-// Ensure instructor access
 if ($_SESSION['role'] != 'instructor') {
     header("Location: ../auth/login.php");
     exit();
@@ -27,7 +26,15 @@ $chartData = $conn->query("
 SELECT t.title, AVG(r.score) as avg_score
 FROM results r
 JOIN tests t ON r.test_id = t.id
-GROUP BY r.id
+GROUP BY t.id
+");
+
+// Fetch tests with questions for management table
+$testsWithQuestions = $conn->query("
+SELECT t.id as test_id, t.title, q.id as question_id, q.question_text
+FROM tests t
+LEFT JOIN questions q ON t.id = q.test_id
+ORDER BY t.id, q.id
 ");
 ?>
 
@@ -35,57 +42,126 @@ GROUP BY r.id
 
 <!-- Stats Cards -->
 <div class="row mb-4">
-
-<div class="col-md-3">
-<div class="card shadow p-3 text-center">
-<h6>Total Tests</h6>
-<h3 id="totalTests"><?= $totalTests ?></h3>
-</div>
-</div>
-
-<div class="col-md-3">
-<div class="card shadow p-3 text-center">
-<h6>Total Students</h6>
-<h3 id="totalStudents"><?= $totalStudents ?></h3>
-</div>
-</div>
-
-<div class="col-md-3">
-<div class="card shadow p-3 text-center">
-<h6>Total Attempts</h6>
-<h3 id="totalAttempts"><?= $totalAttempts ?></h3>
-</div>
-</div>
-
-<div class="col-md-3">
-<div class="card shadow p-3 text-center">
-<h6>➕ Quick Actions</h6>
-<a href="create_test.php" class="btn btn-primary mt-2">Create Test</a>
-<a href="view_results.php" class="btn btn-success mt-2">View Results</a>
-<a href="add_questions.php" class="btn btn-warning mt-2">Add Questions</a>
-</div>
-</div>
-
+    <div class="col-md-3">
+        <div class="card shadow p-3 text-center">
+            <h6>Total Tests</h6>
+            <h3 id="totalTests"><?= $totalTests ?></h3>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow p-3 text-center">
+            <h6>Total Students</h6>
+            <h3 id="totalStudents"><?= $totalStudents ?></h3>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow p-3 text-center">
+            <h6>Total Attempts</h6>
+            <h3 id="totalAttempts"><?= $totalAttempts ?></h3>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow p-3 text-center">
+            <h6>Quick Actions</h6>
+            <a href="create_test.php" class="btn btn-primary mt-2 w-100">Create Test</a>
+            <a href="view_results.php" class="btn btn-success mt-2 w-100">View Results</a>
+            <a href="add_questions.php" class="btn btn-warning mt-2 w-100">Add Questions</a>
+        </div>
+    </div>
 </div>
 
 <!-- Recent Student Activity -->
 <div class="card shadow p-3 mb-4">
-<h5>🧠 Recent Student Activity</h5>
-<ul class="list-group" id="activityFeed">
-<?php while($row = $activities->fetch_assoc()): ?>
-<li class="list-group-item">
-<strong><?= $row['name'] ?></strong> took 
-<strong><?= $row['title'] ?></strong> → 
-<span class="badge bg-info"><?= $row['score'] ?>%</span>
-</li>
-<?php endwhile; ?>
-</ul>
+    <h5>🧠 Recent Student Activity</h5>
+    <ul class="list-group" id="activityFeed">
+        <?php while($row = $activities->fetch_assoc()): ?>
+        <li class="list-group-item">
+            <strong><?= $row['name'] ?></strong> took 
+            <strong><?= $row['title'] ?></strong> → 
+            <span class="badge bg-info"><?= $row['score'] ?>%</span>
+        </li>
+        <?php endwhile; ?>
+    </ul>
 </div>
 
 <!-- Chart: Average Score per Test -->
 <div class="card shadow p-3 mb-4">
-<h5 class="text-center">📈 Test Performance</h5>
-<canvas id="chart"></canvas>
+    <h5 class="text-center">📈 Test Performance</h5>
+    <canvas id="chart"></canvas>
+</div>
+
+<!-- Questions Management Table -->
+<div class="card shadow p-3 mb-4">
+    <h5>✏️ Manage Questions</h5>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Test</th>
+                <th>Question</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php while($row = $testsWithQuestions->fetch_assoc()): ?>
+            <tr>
+                <td><?= $row['title'] ?></td>
+                <td><?= $row['question_text'] ?: 'No questions yet' ?></td>
+                <td>
+                    <?php if($row['question_id']): ?>
+                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#editQuestionModal<?= $row['question_id'] ?>">Edit</button>
+                    <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteQuestionModal<?= $row['question_id'] ?>">Delete</button>
+
+                    <!-- Edit Modal -->
+                    <div class="modal fade" id="editQuestionModal<?= $row['question_id'] ?>" tabindex="-1">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <form method="POST" action="edit_question.php">
+                          <div class="modal-header">
+                            <h5 class="modal-title">Edit Question</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                          </div>
+                          <div class="modal-body">
+                            <input type="hidden" name="question_id" value="<?= $row['question_id'] ?>">
+                            <textarea class="form-control" name="question_text" required><?= $row['question_text'] ?></textarea>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Delete Modal -->
+                    <div class="modal fade" id="deleteQuestionModal<?= $row['question_id'] ?>" tabindex="-1">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <form method="POST" action="delete_question.php">
+                          <div class="modal-header">
+                            <h5 class="modal-title">Delete Question</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                          </div>
+                          <div class="modal-body">
+                            <p>Are you sure you want to delete this question?</p>
+                            <input type="hidden" name="question_id" value="<?= $row['question_id'] ?>">
+                          </div>
+                          <div class="modal-footer">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                          </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    <?php else: ?>
+                        <span class="text-muted">—</span>
+                    <?php endif; ?>
+                </td>
+            </tr>
+        <?php endwhile; ?>
+        </tbody>
+    </table>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -96,7 +172,7 @@ const labels = [
 
 const data = [
 <?php
-$chartData->data_seek(0); // reset pointer
+$chartData->data_seek(0);
 while($c = $chartData->fetch_assoc()) echo $c['avg_score'].",";
 ?>
 ];
