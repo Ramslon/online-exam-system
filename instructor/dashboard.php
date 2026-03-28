@@ -112,27 +112,53 @@ ORDER BY t.id, q.id
                     <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteQuestionModal<?= $row['question_id'] ?>">Delete</button>
 
                     <!-- Edit Modal -->
-                    <div class="modal fade" id="editQuestionModal<?= $row['question_id'] ?>" tabindex="-1">
-                      <div class="modal-dialog">
-                        <div class="modal-content">
-                          <form method="POST" action="edit_question.php">
-                          <div class="modal-header">
-                            <h5 class="modal-title">Edit Question</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                          </div>
-                          <div class="modal-body">
-                            <input type="hidden" name="question_id" value="<?= $row['question_id'] ?>">
-                            <textarea class="form-control" name="question_text" required><?= $row['question_text'] ?></textarea>
-                          </div>
-                          <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Save</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                          </div>
-                          </form>
-                        </div>
-                      </div>
-                    </div>
+<div class="modal fade" id="editQuestionModal<?= $row['question_id'] ?>" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="edit_question.php">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Question</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
 
+        <div class="modal-body">
+
+          <input type="hidden" name="question_id" value="<?= $row['question_id'] ?>">
+
+          <!-- Question -->
+          <div class="mb-3">
+            <label>Question</label>
+            <textarea class="form-control" name="question_text" required><?= $row['question_text'] ?></textarea>
+          </div>
+
+          <!-- Options -->
+          <?php
+          $opts = $conn->query("SELECT * FROM options WHERE question_id={$row['question_id']}");
+          $i = 0;
+          while($opt = $opts->fetch_assoc()):
+          ?>
+          <div class="input-group mb-2">
+            <span class="input-group-text">
+              <input type="radio" name="correct" value="<?= $i ?>" <?= $opt['is_correct'] ? 'checked' : '' ?> required>
+            </span>
+            <input type="text" class="form-control" name="options[]" value="<?= $opt['option_text'] ?>" required>
+            <input type="hidden" name="option_ids[]" value="<?= $opt['id'] ?>">
+          </div>
+          <?php $i++; endwhile; ?>
+
+          <small class="text-muted">Select the correct option</small>
+
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-primary">Save Changes</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
                     <!-- Delete Modal -->
                     <div class="modal fade" id="deleteQuestionModal<?= $row['question_id'] ?>" tabindex="-1">
                       <div class="modal-dialog">

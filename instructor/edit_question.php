@@ -8,17 +8,28 @@ if ($_SESSION['role'] != 'instructor') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
     $question_id = $_POST['question_id'];
     $question_text = $_POST['question_text'];
+    $options = $_POST['options'];
+    $option_ids = $_POST['option_ids'];
+    $correct = $_POST['correct'];
 
-    $stmt = $conn->prepare("UPDATE questions SET question_text = ? WHERE id = ?");
+    // 1. Update question text
+    $stmt = $conn->prepare("UPDATE questions SET question_text=? WHERE id=?");
     $stmt->bind_param("si", $question_text, $question_id);
+    $stmt->execute();
 
-    if ($stmt->execute()) {
-        $_SESSION['success'] = "Question updated successfully!";
-    } else {
-        $_SESSION['error'] = "Failed to update question.";
+    // 2. Update options
+    for ($i = 0; $i < count($options); $i++) {
+        $is_correct = ($i == $correct) ? 1 : 0;
+
+        $stmt = $conn->prepare("UPDATE options SET option_text=?, is_correct=? WHERE id=?");
+        $stmt->bind_param("sii", $options[$i], $is_correct, $option_ids[$i]);
+        $stmt->execute();
     }
+
+    $_SESSION['success'] = "Question updated successfully!";
 }
 
 header("Location: dashboard.php");
