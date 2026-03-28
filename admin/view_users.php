@@ -166,26 +166,32 @@ Delete
 
 <!-- ================= JAVASCRIPT ================= -->
 <script>
-const editModal = new bootstrap.Modal(document.getElementById('editModal'));
-const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+document.addEventListener("DOMContentLoaded", function () {
 
-document.querySelectorAll('.editBtn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.getElementById('edit_id').value = btn.dataset.id;
-        document.getElementById('edit_name').value = btn.dataset.name;
-        document.getElementById('edit_role').value = btn.dataset.role;
-        editModal.show();
-    });
-});
+    const editModalEl = document.getElementById('editModal');
+    const deleteModalEl = document.getElementById('deleteModal');
 
-document.querySelectorAll('.deleteBtn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.getElementById('delete_id').value = btn.dataset.id;
-        document.getElementById('delete_text').innerText =
-            "Are you sure you want to delete " + btn.dataset.name + "?";
-        deleteModal.show();
+    const editModal = new bootstrap.Modal(editModalEl);
+    const deleteModal = new bootstrap.Modal(deleteModalEl);
+
+    document.querySelectorAll('.editBtn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            document.getElementById('edit_id').value = this.dataset.id;
+            document.getElementById('edit_name').value = this.dataset.name;
+            document.getElementById('edit_role').value = this.dataset.role;
+            editModal.show();
+        });
     });
+
+    document.querySelectorAll('.deleteBtn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            document.getElementById('delete_id').value = this.dataset.id;
+            document.getElementById('delete_text').innerText =
+                "Are you sure you want to delete " + this.dataset.name + "?";
+            deleteModal.show();
+        });
+    });
+
 });
 </script>
-
 <?php include '../includes/footer.php'; ?>
